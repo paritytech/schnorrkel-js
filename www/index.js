@@ -1,3 +1,5 @@
-import * as schnorrkel from "schnorrkel-js";
+import * as wasm from "schnorrkel-js";
 
-window.schnorrkel = schnorrkel
+// to enable debug
+window.schnorrkel = wasm
+

@@ -2,9 +2,36 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Hello wasm-pack!</title>
+    <link href="https://cdn.rawgit.com/mochajs/mocha/2.2.5/mocha.css" rel="stylesheet" />
+    
+    <title>Schnorrkel-js</title>
   </head>
   <body>
+    <div id="mocha"></div>
+
+    <!-- Load test dependencies  -->
+    <script src="https://unpkg.com/chai@4.1.2/chai.js"></script>
+    <script src="https://unpkg.com/mocha@4.0.1/mocha.js"></script>
+
+    <!-- set test mode  -->
+    <script> 
+      mocha.setup({
+        ui: 'bdd',
+        globals: ['*'],
+        ignoreLeaks: true 
+      })
+    </script>
+
+    <!-- Load the wasm module  -->
     <script src="./bootstrap.js"></script>
+
+    <!-- Load the test files -->
+    <script src="tests.js"></script>
+
+    <!-- Run actual tests -->
+    <script>
+      mocha.checkLeaks();
+      mocha.run();
+    </script>
   </body>
 </html>

@@ -105,4 +105,9 @@ pub mod tests {
 		let signature = sign(public, private, message);
 		assert!(verify(&signature[..], message, public));
 	}
+
+	#[wasm_bindgen_test]
+	fn reject_wrong_signature() {
+		unimplemented!();
+	}
 }
