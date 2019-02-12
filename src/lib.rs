@@ -55,11 +55,13 @@ pub fn keypair_from_seed(seed: &[u8]) -> Vec<u8> {
 #[cfg(test)]
 pub mod tests {
 	extern crate wasm_bindgen_test;
-
 	extern crate rand;
+	extern crate schnorrkel;
 
 	use wasm_bindgen_test::*;
 	use super::*;
+	use schnorrkel::{SIGNATURE_LENGTH, KEYPAIR_LENGTH, SECRET_KEY_LENGTH, PUBLIC_KEY_LENGTH};
+
 
 	// to enable browser tests
 	// wasm_bindgen_test_configure!(run_in_browser);
@@ -72,33 +74,33 @@ pub mod tests {
 	fn can_create_keypair() {
 		let seed = generate_random_seed();
 		let keypair = keypair_from_seed(seed.as_slice());
-		assert!(keypair.len() == 96);
+		assert!(keypair.len() == KEYPAIR_LENGTH);
 	}
 
 	#[wasm_bindgen_test]
 	fn can_create_secret() {
 		let seed = generate_random_seed();
-		let keypair = secret_from_seed(seed.as_slice());
-		assert!(keypair.len() == 64);
+		let secret = secret_from_seed(seed.as_slice());
+		assert!(secret.len() == SECRET_KEY_LENGTH);
 	}
 
 	#[wasm_bindgen_test]
 	fn can_sign_message() {
 		let seed = generate_random_seed();
 		let keypair = keypair_from_seed(seed.as_slice());
-		let private = &keypair[0..64];
-		let public = &keypair[64..96];
+		let private = &keypair[0..SECRET_KEY_LENGTH];
+		let public = &keypair[SECRET_KEY_LENGTH..KEYPAIR_LENGTH];
 		let message = b"this is a message";
 		let signature = sign(public, private, message);
-		assert!(signature.len() == 64);
+		assert!(signature.len() == SIGNATURE_LENGTH);
 	}
 
 	#[wasm_bindgen_test]
 	fn can_verify_message() {
 		let seed = generate_random_seed();
 		let keypair = keypair_from_seed(seed.as_slice());
-		let private = &keypair[0..64];
-		let public = &keypair[64..96];
+		let private = &keypair[0..SECRET_KEY_LENGTH];
+		let public = &keypair[SECRET_KEY_LENGTH..KEYPAIR_LENGTH];
 		let message = b"this is a message";
 		let signature = sign(public, private, message);
 		assert!(verify(&signature[..], message, public));
