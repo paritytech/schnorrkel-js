@@ -21,7 +21,7 @@ npm link
 
 This creates a local binding to npm, instructing it to use this folder whenever `schnorrkel-js` was imported as an npm module using `require()` or `import`. 
 
-Next, create head to the provided `www` folder (experimental test folder created via [cargo-generate](https://github.com/ashleygwilliams/cargo-generate): `cargo generate --git https://github.com/rustwasm/wasm-pack-template`) and: 
+Next, create head to the provided `www` folder (experimental test folder created via [npm]: `npm init wasm-app www`) and: 
 
 ```
 # Run just once
