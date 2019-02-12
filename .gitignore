@@ -1,5 +1,9 @@
 /target
 **/*.rs.bk
-/www
 Cargo.lock
 .vscode/
+/node_modules
+/dist
+.bin
+target
+pkg
