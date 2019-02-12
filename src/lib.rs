@@ -51,3 +51,51 @@ pub fn secret_from_seed(seed: &[u8]) -> Vec<u8> {
 pub fn keypair_from_seed(seed: &[u8]) -> Vec<u8> {
 	__keypair_from_seed(seed).to_vec()
 }
+
+pub mod tests {
+	extern crate wasm_bindgen_test;
+	extern crate rand;
+
+	use wasm_bindgen_test::*;
+	use super::*;
+
+	fn generate_random_seed() -> Vec<u8> {
+		(0..32).map(|_| rand::random::<u8>() ).collect()
+	}
+
+	#[wasm_bindgen_test]
+	fn can_create_keypair() {
+		let seed = generate_random_seed();
+		let keypair = keypair_from_seed(seed.as_slice());
+		assert!(keypair.len() == 96);
+	}
+
+	#[wasm_bindgen_test]
+	fn can_create_secret() {
+		let seed = generate_random_seed();
+		let keypair = secret_from_seed(seed.as_slice());
+		assert!(keypair.len() == 64);
+	}
+
+	#[wasm_bindgen_test]
+	fn can_sign_message() {
+		let seed = generate_random_seed();
+		let keypair = keypair_from_seed(seed.as_slice());
+		let private = &keypair[0..64];
+		let public = &keypair[64..96];
+		let message = b"this is a message";
+		let signature = sign(public, private, message);
+		assert!(signature.len() == 64);
+	}
+
+	#[wasm_bindgen_test]
+	fn can_verify_message() {
+		let seed = generate_random_seed();
+		let keypair = keypair_from_seed(seed.as_slice());
+		let private = &keypair[0..64];
+		let public = &keypair[64..96];
+		let message = b"this is a message";
+		let signature = sign(public, private, message);
+		assert!(verify(&signature[..], message, public));
+	}
+}

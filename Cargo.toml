@@ -9,5 +9,9 @@ crate-type = ["cdylib"]
 
 [dependencies]
 wasm-bindgen = { version = "0.2" }
+wasm-bindgen-test = { version = "0.2" }
 sha2 = { version = "0.8"}
 schnorrkel = { git = "https://github.com/w3f/schnorrkel.git", features = ["nightly"]}
+
+[dev-dependencies]
+rand = { version = "0.6.5", features = ["wasm-bindgen"] }
