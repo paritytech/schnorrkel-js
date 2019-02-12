@@ -39,3 +39,26 @@ window.schnorrkel = schnorrkel
 ```
 
 To make any further changes, given that the linking with `npm link` is correct, just re-compile with `wasm-pack build` and let the `npm run start` be running in a separate process. It should automatically reload. 
+
+
+# Tests
+
+Run the tests in Node.Js environment via
+
+```
+wasm-pack test --node 
+```
+
+or to run them directly in the browser:
+
+add this line to the tests module in lib.rs
+
+```
+wasm_bindgen_test_configure!(run_in_browser);
+```
+
+Then
+
+```
+wasm-pack test --chrome  
+```

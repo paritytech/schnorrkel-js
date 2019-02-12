@@ -52,12 +52,17 @@ pub fn keypair_from_seed(seed: &[u8]) -> Vec<u8> {
 	__keypair_from_seed(seed).to_vec()
 }
 
+#[cfg(test)]
 pub mod tests {
 	extern crate wasm_bindgen_test;
+
 	extern crate rand;
 
 	use wasm_bindgen_test::*;
 	use super::*;
+
+	// to enable browser tests
+	// wasm_bindgen_test_configure!(run_in_browser);
 
 	fn generate_random_seed() -> Vec<u8> {
 		(0..32).map(|_| rand::random::<u8>() ).collect()
