@@ -12,7 +12,7 @@ const SIGNING_CTX: &'static [u8] = b"substrate transaction";
 fn keypair_from_seed(seed: &[u8]) -> Keypair {
 	let mini_key: MiniSecretKey = MiniSecretKey::from_bytes(seed)
 		.expect("32 bytes can always build a key; qed");
-	mini_key.expand_to_keypair()
+	mini_key.expand_to_keypair::<Sha512>()
 }
 
 pub fn __keypair_from_seed(seed: &[u8]) -> [u8; KEYPAIR_LENGTH] {
