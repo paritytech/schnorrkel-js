@@ -1,6 +1,6 @@
 # Schnorrkel-js
 
-Provides a Javascript wrapper for some of the high-level functionality provided by schnorrkel. 
+Provides a Javascript wrapper for some of the high-level functionality provided by [schnorrkel](https://github.com/w3f/schnorrkel).
 
 
 # How to Use
