@@ -69,7 +69,7 @@ pub mod tests {
 
 
 	// to enable browser tests
-	// wasm_bindgen_test_configure!(run_in_browser);
+	wasm_bindgen_test_configure!(run_in_browser);
 
 	fn generate_random_seed() -> Vec<u8> {
 		(0..32).map(|_| rand::random::<u8>() ).collect()
