@@ -33,7 +33,7 @@ pub fn verify(signature: &[u8], message: &[u8], pubkey: &[u8]) -> bool {
 
 #[wasm_bindgen]
 pub fn expand_to_public(secret: &[u8]) -> Vec<u8> {
-	
+	__expand_to_public(secret).to_vec()
 }
 
 /// Generate a secret key (aka. private key) from a seed phrase.

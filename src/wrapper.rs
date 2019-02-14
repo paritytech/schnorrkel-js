@@ -10,7 +10,8 @@ const SIGNING_CTX: &'static [u8] = b"substrate transaction";
 
 
 pub fn __sign(secret: &[u8], message: &[u8]) -> [u8; SIGNATURE_LENGTH] {
-	let kp = SecretKey::from_bytes(secret).unwrap();
+	let secret_key = SecretKey::from_bytes(secret).unwrap();
+	let kp = secret_key.to_keypair();
 	let context = signing_context(SIGNING_CTX);
 	kp.sign(context.bytes(message)).to_bytes()
 }
@@ -47,7 +48,6 @@ pub fn __secret_from_seed(seed: &[u8]) -> [u8; SECRET_KEY_LENGTH] {
 	s
 }
 
-pub fn __expand_to_public(secret: &[u8]) -> Vec<u8> {
-	let mini_key: MiniSecretKey = MiniSecretKey::from_bytes(secret).unwrap();
-	mini_key.expand_to_keypair::<Sha512>()
+pub fn __expand_to_public(secret: &[u8]) -> [u8; PUBLIC_KEY_LENGTH] {
+	SecretKey::from_bytes(secret).unwrap().to_public().to_bytes()
 }
