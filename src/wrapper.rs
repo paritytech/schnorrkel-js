@@ -3,8 +3,6 @@ use schnorrkel::keys::*;
 use schnorrkel::context::{signing_context}; 
 use schnorrkel::sign::{Signature,SIGNATURE_LENGTH};
 
-use sha2::Sha512;
-
 // We must make sure that this is the same as declared in the substrate source code.
 const SIGNING_CTX: &'static [u8] = b"substrate transaction";
 
@@ -31,7 +29,7 @@ pub fn __verify(signature: &[u8], message: &[u8], pubkey: &[u8]) -> bool {
 /// Private helper function.
 fn keypair_from_seed(seed: &[u8]) -> Keypair {
 	let mini_key: MiniSecretKey = MiniSecretKey::from_bytes(seed).unwrap();
-	mini_key.expand_to_keypair::<Sha512>()
+	mini_key.expand_to_keypair()
 }
 
 pub fn __keypair_from_seed(seed: &[u8]) -> [u8; KEYPAIR_LENGTH] {

@@ -94,9 +94,8 @@ pub mod tests {
 		let seed = generate_random_seed();
 		let keypair = keypair_from_seed(seed.as_slice());
 		let private = &keypair[0..SECRET_KEY_LENGTH];
-		let public = &keypair[SECRET_KEY_LENGTH..KEYPAIR_LENGTH];
 		let message = b"this is a message";
-		let signature = sign(public, private, message);
+		let signature = sign(private, message);
 		assert!(signature.len() == SIGNATURE_LENGTH);
 	}
 
@@ -107,7 +106,17 @@ pub mod tests {
 		let private = &keypair[0..SECRET_KEY_LENGTH];
 		let public = &keypair[SECRET_KEY_LENGTH..KEYPAIR_LENGTH];
 		let message = b"this is a message";
-		let signature = sign(public, private, message);
+		let signature = sign(private, message);
 		assert!(verify(&signature[..], message, public));
+	}
+
+	#[wasm_bindgen_test]
+	fn can_extract_public_from_secret() {
+		let seed = generate_random_seed();
+		let keypair = keypair_from_seed(seed.as_ref());
+		let private = &keypair[0..SECRET_KEY_LENGTH];
+		let known_public = &keypair[SECRET_KEY_LENGTH..KEYPAIR_LENGTH];
+		let inferred_public = expand_to_public(private);
+		assert!(known_public.to_vec() == inferred_public);
 	}
 }
