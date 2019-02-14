@@ -65,7 +65,7 @@ pub mod tests {
 
 	use wasm_bindgen_test::*;
 	use super::*;
-	use schnorrkel::{SIGNATURE_LENGTH, KEYPAIR_LENGTH, SECRET_KEY_LENGTH, PUBLIC_KEY_LENGTH};
+	use schnorrkel::{SIGNATURE_LENGTH, KEYPAIR_LENGTH, SECRET_KEY_LENGTH};
 
 
 	// to enable browser tests
@@ -109,10 +109,5 @@ pub mod tests {
 		let message = b"this is a message";
 		let signature = sign(public, private, message);
 		assert!(verify(&signature[..], message, public));
-	}
-
-	#[wasm_bindgen_test]
-	fn reject_wrong_signature() {
-		unimplemented!();
 	}
 }
