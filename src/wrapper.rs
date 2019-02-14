@@ -2,6 +2,7 @@
 use schnorrkel::keys::*;
 use schnorrkel::context::{signing_context}; 
 use schnorrkel::sign::{Signature,SIGNATURE_LENGTH};
+use schnorrkel::SignatureError;
 
 // We must make sure that this is the same as declared in the substrate source code.
 const SIGNING_CTX: &'static [u8] = b"substrate transaction";
@@ -27,23 +28,23 @@ pub fn __verify(signature: &[u8], message: &[u8], pubkey: &[u8]) -> bool {
 }
 
 /// Private helper function.
-fn keypair_from_seed(seed: &[u8]) -> Keypair {
-	let mini_key: MiniSecretKey = MiniSecretKey::from_bytes(seed).unwrap();
-	mini_key.expand_to_keypair()
+fn keypair_from_seed(seed: &[u8]) -> Result<Keypair, SignatureError>  {
+	let mini_key: MiniSecretKey = MiniSecretKey::from_bytes(seed)?;
+	Ok(mini_key.expand_to_keypair())
 }
 
-pub fn __keypair_from_seed(seed: &[u8]) -> [u8; KEYPAIR_LENGTH] {
-	let keypair = keypair_from_seed(seed).to_bytes();
+pub fn __keypair_from_seed(seed: &[u8]) -> Result<[u8; KEYPAIR_LENGTH], SignatureError> {
+	let keypair = keypair_from_seed(seed)?.to_bytes();
 	let mut kp = [0u8; KEYPAIR_LENGTH];
 	kp.copy_from_slice(&keypair);
-	kp
+	Ok(kp)
 }
 
-pub fn __secret_from_seed(seed: &[u8]) -> [u8; SECRET_KEY_LENGTH] {
-	let secret = keypair_from_seed(seed).secret.to_bytes();
+pub fn __secret_from_seed(seed: &[u8]) -> Result<[u8; SECRET_KEY_LENGTH], SignatureError> {
+	let secret = keypair_from_seed(seed)?.secret.to_bytes();
 	let mut s = [0u8; SECRET_KEY_LENGTH];
 	s.copy_from_slice(&secret);
-	s
+	Ok(s)
 }
 
 pub fn __expand_to_public(secret: &[u8]) -> [u8; PUBLIC_KEY_LENGTH] {

@@ -42,8 +42,11 @@ pub fn expand_to_public(secret: &[u8]) -> Vec<u8> {
 /// 
 /// returned vector is the private key consisting of 64 bytes.
 #[wasm_bindgen]
-pub fn secret_from_seed(seed: &[u8]) -> Vec<u8> {
-	__secret_from_seed(seed).to_vec()
+pub fn secret_from_seed(seed: &[u8]) -> Result<Vec<u8>, JsValue> {
+	match __secret_from_seed(seed) {
+		Ok(some_seed) => Ok(some_seed.to_vec()),
+		Err(_) => Err(JsValue::from_str("make sure the seed is 32 bytes"))
+	}
 } 
 
 /// Generate a key pair. .
@@ -53,8 +56,12 @@ pub fn secret_from_seed(seed: &[u8]) -> Vec<u8> {
 /// returned vector is the concatenation of first the private key (64 bytes)
 /// followed by the public key (32) bytes.
 #[wasm_bindgen]
-pub fn keypair_from_seed(seed: &[u8]) -> Vec<u8> {
-	__keypair_from_seed(seed).to_vec()
+pub fn keypair_from_seed(seed: &[u8]) -> Result<Vec<u8>, JsValue> {
+	match __keypair_from_seed(seed) {
+		Ok(some_kp) => Ok(some_kp.to_vec()),
+		Err(err) => Err(JsValue::from_str(&format!("{}", err))
+		)
+	}
 }
 
 #[cfg(test)]
@@ -69,7 +76,7 @@ pub mod tests {
 
 
 	// to enable browser tests
-	wasm_bindgen_test_configure!(run_in_browser);
+	// wasm_bindgen_test_configure!(run_in_browser);
 
 	fn generate_random_seed() -> Vec<u8> {
 		(0..32).map(|_| rand::random::<u8>() ).collect()
