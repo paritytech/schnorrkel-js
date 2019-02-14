@@ -1,6 +1,23 @@
 # Schnorrkel-js
 
-Provides a Javascript wrapper for some of the high-level functionality provded by schnorrkel. 
+Provides a Javascript wrapper for some of the high-level functionality provided by schnorrkel. 
+
+
+# How to Use
+
+### Install 
+
+```
+npm install @parity/schnorrkel-js
+```
+
+### API 
+
+The functions exposed via wasm are explained [here(rust)]() or [here(js)]. You can clone the repo and run the following to see the details: 
+
+```
+cargo docs --open 
+```
 
 # Build 
 
@@ -39,6 +56,8 @@ window.schnorrkel = schnorrkel
 ```
 
 To make any further changes, given that the linking with `npm link` is correct, just re-compile with `wasm-pack build` and let the `npm run start` be running in a separate process. It should automatically reload. 
+
+The default webpage 
 
 
 # Tests
