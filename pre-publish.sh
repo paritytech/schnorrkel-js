@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Compile the latest version; update ./pkg and readme files in it.
-wasm-pack build --target browser
+wasm-pack build --target nodejs
 
 # Fix the name 
 sed -i -e 's/schnorrkel-js/@parity\/schnorrkel-js/g' pkg/package.json
