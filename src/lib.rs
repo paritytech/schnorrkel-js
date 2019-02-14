@@ -17,8 +17,8 @@ use wrapper::*;
 /// 
 /// * returned vector is the signature consisting of 64 bytes.
 #[wasm_bindgen]
-pub fn sign(public: &[u8], private: &[u8], message: &[u8]) -> Vec<u8> {
-	__sign(public, private, message).to_vec()
+pub fn sign(secret: &[u8], message: &[u8]) -> Vec<u8> {
+	__sign(secret, message).to_vec()
 }
 
 /// Verify a message and its corresponding against a public key;
@@ -29,6 +29,11 @@ pub fn sign(public: &[u8], private: &[u8], message: &[u8]) -> Vec<u8> {
 #[wasm_bindgen]
 pub fn verify(signature: &[u8], message: &[u8], pubkey: &[u8]) -> bool {
 	__verify(signature, message, pubkey)
+}
+
+#[wasm_bindgen]
+pub fn expand_to_public(secret: &[u8]) -> Vec<u8> {
+	
 }
 
 /// Generate a secret key (aka. private key) from a seed phrase.
