@@ -7,12 +7,11 @@ use schnorrkel::SignatureError;
 // We must make sure that this is the same as declared in the substrate source code.
 const SIGNING_CTX: &'static [u8] = b"substrate transaction";
 
-
-pub fn __sign(secret: &[u8], message: &[u8]) -> [u8; SIGNATURE_LENGTH] {
-	let secret_key = SecretKey::from_bytes(secret).unwrap();
+pub fn __sign(secret: &[u8], message: &[u8]) -> Result<[u8; SIGNATURE_LENGTH], SignatureError> {
+	let secret_key = SecretKey::from_bytes(secret)?;
 	let kp = secret_key.to_keypair();
 	let context = signing_context(SIGNING_CTX);
-	kp.sign(context.bytes(message)).to_bytes()
+	Ok(kp.sign(context.bytes(message)).to_bytes())
 }
 
 pub fn __verify(signature: &[u8], message: &[u8], pubkey: &[u8]) -> bool {
