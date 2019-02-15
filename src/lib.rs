@@ -2,6 +2,7 @@ extern crate wasm_bindgen;
 use wasm_bindgen::prelude::*;
 
 extern crate schnorrkel;
+extern crate sha2;
 
 mod wrapper;
 use wrapper::*;
@@ -17,8 +18,11 @@ use wrapper::*;
 /// 
 /// * returned vector is the signature consisting of 64 bytes.
 #[wasm_bindgen]
-pub fn sign(secret: &[u8], message: &[u8]) -> Vec<u8> {
-	__sign(secret, message).to_vec()
+pub fn sign(secret: &[u8], message: &[u8]) -> Result<Vec<u8>, JsValue> {
+	match __sign(secret, message) {
+		Ok(some_sig) => Ok(some_sig.to_vec()),
+		Err(err) => Err(JsValue::from_str(&format!("{}", err)))
+	}
 }
 
 /// Verify a message and its corresponding against a public key;
@@ -32,8 +36,11 @@ pub fn verify(signature: &[u8], message: &[u8], pubkey: &[u8]) -> bool {
 }
 
 #[wasm_bindgen]
-pub fn expand_to_public(secret: &[u8]) -> Vec<u8> {
-	__expand_to_public(secret).to_vec()
+pub fn expand_to_public(secret: &[u8]) -> Result<Vec<u8>, JsValue> {
+	match __expand_to_public(secret) {
+		Ok(some_public) => Ok(some_public.to_vec()),
+		Err(err) => Err(JsValue::from_str(&format!("{}", err)))
+	}
 }
 
 /// Generate a secret key (aka. private key) from a seed phrase.
@@ -45,7 +52,7 @@ pub fn expand_to_public(secret: &[u8]) -> Vec<u8> {
 pub fn secret_from_seed(seed: &[u8]) -> Result<Vec<u8>, JsValue> {
 	match __secret_from_seed(seed) {
 		Ok(some_seed) => Ok(some_seed.to_vec()),
-		Err(_) => Err(JsValue::from_str("make sure the seed is 32 bytes"))
+		Err(err) => Err(JsValue::from_str(&format!("{}", err)))
 	}
 } 
 
@@ -59,8 +66,7 @@ pub fn secret_from_seed(seed: &[u8]) -> Result<Vec<u8>, JsValue> {
 pub fn keypair_from_seed(seed: &[u8]) -> Result<Vec<u8>, JsValue> {
 	match __keypair_from_seed(seed) {
 		Ok(some_kp) => Ok(some_kp.to_vec()),
-		Err(err) => Err(JsValue::from_str(&format!("{}", err))
-		)
+		Err(err) => Err(JsValue::from_str(&format!("{}", err)))
 	}
 }
 
@@ -85,45 +91,45 @@ pub mod tests {
 	#[wasm_bindgen_test]
 	fn can_create_keypair() {
 		let seed = generate_random_seed();
-		let keypair = keypair_from_seed(seed.as_slice());
+		let keypair = keypair_from_seed(seed.as_slice()).unwrap();
 		assert!(keypair.len() == KEYPAIR_LENGTH);
 	}
 
 	#[wasm_bindgen_test]
 	fn can_create_secret() {
 		let seed = generate_random_seed();
-		let secret = secret_from_seed(seed.as_slice());
+		let secret = secret_from_seed(seed.as_slice()).unwrap();
 		assert!(secret.len() == SECRET_KEY_LENGTH);
 	}
 
 	#[wasm_bindgen_test]
 	fn can_sign_message() {
 		let seed = generate_random_seed();
-		let keypair = keypair_from_seed(seed.as_slice());
+		let keypair = keypair_from_seed(seed.as_slice()).unwrap();
 		let private = &keypair[0..SECRET_KEY_LENGTH];
 		let message = b"this is a message";
-		let signature = sign(private, message);
+		let signature = sign(private, message).unwrap();
 		assert!(signature.len() == SIGNATURE_LENGTH);
 	}
 
 	#[wasm_bindgen_test]
 	fn can_verify_message() {
 		let seed = generate_random_seed();
-		let keypair = keypair_from_seed(seed.as_slice());
+		let keypair = keypair_from_seed(seed.as_slice()).unwrap();
 		let private = &keypair[0..SECRET_KEY_LENGTH];
 		let public = &keypair[SECRET_KEY_LENGTH..KEYPAIR_LENGTH];
 		let message = b"this is a message";
-		let signature = sign(private, message);
+		let signature = sign(private, message).unwrap();
 		assert!(verify(&signature[..], message, public));
 	}
 
 	#[wasm_bindgen_test]
 	fn can_extract_public_from_secret() {
 		let seed = generate_random_seed();
-		let keypair = keypair_from_seed(seed.as_ref());
+		let keypair = keypair_from_seed(seed.as_ref()).unwrap();
 		let private = &keypair[0..SECRET_KEY_LENGTH];
 		let known_public = &keypair[SECRET_KEY_LENGTH..KEYPAIR_LENGTH];
-		let inferred_public = expand_to_public(private);
+		let inferred_public = expand_to_public(private).unwrap();
 		assert!(known_public.to_vec() == inferred_public);
 	}
 }
