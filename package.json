@@ -1,0 +1,31 @@
+{
+    "name": "@parity/schnorrkel-js",
+    "description": "a wasm port of the schnorrkel crypto library.",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/paritytech/schnorrkel-js"
+    },
+    "author": "Parity Technologies <admin@parity.io> (https://parity.io/)",
+    "license": "Apache-2.0",
+    "bugs": {
+        "url": "https://github.com/paritytech/schnorrkel-js/issues"
+    },
+    "homepage": "https://github.com/paritytech/schnorrkel-js#readme",
+
+    "collaborators": [
+        "kianenigma <Kian.peymani@gmail.com>"
+    ],
+    "version": "0.1.5",
+    "files": [
+        "schnorrkel_js_bg.wasm",
+
+        "schnorrkel.wp.js",
+        "schnorrkel.node.js",
+
+        "schnorrkel_js_bg.js",
+        "schnorrkel_js.d.ts"
+    ],
+    "module": "schnorrkel.wp.js",
+    "types": "schnorrkel_js.d.ts",
+    "sideEffects": "false"
+}
