@@ -11,6 +11,25 @@ Provides a Javascript wrapper for some of the high-level functionality provided 
 npm install @parity/schnorrkel-js
 ```
 
+### Use it: 
+
+- In node environment: 
+
+```
+let schnorrkel = require('@parity/schnorrkel-js/schnorrkel.node')
+```
+
+- In Webpack: 
+
+```
+import * as schnorrkel from "@parity/schnorrkel-js/schnorrkel.wp";
+```
+
+Note that this requires: 
+
+- Your webserver to be configured to serve the `.wasm` file with the currect content-type.
+- You can only call wasm functions after the instantiation of the module as has been completed and reported via a console message. (Work in progress to improve. this sucks.)
+
 ### API 
 
 The functions exposed via wasm are explained [here(rust)]() or [here(js)]. You can clone the repo and run the following to see the details: 
