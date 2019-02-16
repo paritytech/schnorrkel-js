@@ -10,7 +10,6 @@ function hexlify(arr) {
     let hex = ""
     for (let byte of arr) {
         let _byte = byte.toString(16).padStart(2, "0")
-        console.log(byte, _byte) ; 
         hex += _byte
     }
     return "0x" + hex
@@ -24,13 +23,13 @@ String.prototype.getBytes = function () {
     return bytes;
 };
 
-let schnorrkel = require('./schnorrkel_js')
+let schnorrkel = require('./pkg/schnorrkel.node')
 let msg = "SUBSTRATE".getBytes()
 let seed = new Uint8Array(32)
 let kp = schnorrkel.keypair_from_seed(seed)
 let secret = kp.slice(0, 64)
 let public = kp.slice(64, 96)
-let sig = schnorrkel.sign(public, secret, msg)
+let sig = schnorrkel.sign(secret, msg)
 console.log(`++ used seed ${hexlify(seed)}`)
 console.log(`++ public => ${hexlify(public)}`)
 console.log(`++ secret => ${hexlify(secret)}`)
