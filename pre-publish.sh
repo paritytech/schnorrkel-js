@@ -4,7 +4,7 @@
 wasm-pack build --target nodejs
 
 # Fix the name 
-sed -i -e 's/schnorrkel-js/@parity\/schnorrkel-js/g' pkg/package.json
+sed -i -e 's/schnorrkel-js/@substrate\/schnorrkel-js/g' pkg/package.json
 
 # Run the script to fix node/browser import support
 ./pack-node.sh
