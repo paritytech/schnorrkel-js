@@ -8,7 +8,7 @@ Provides a Javascript wrapper for some of the high-level functionality provided 
 ### Install 
 
 ```
-npm install @parity/schnorrkel-js
+npm install @substrate/schnorrkel-js
 ```
 
 ### API 
