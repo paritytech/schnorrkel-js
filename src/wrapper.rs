@@ -6,7 +6,7 @@ use schnorrkel::sign::{Signature,SIGNATURE_LENGTH};
 use sha2::Sha512;
 
 // We must make sure that this is the same as declared in the substrate source code.
-const SIGNING_CTX: &'static [u8] = b"substrate transaction";
+const SIGNING_CTX: &'static [u8] = b"substrate";
 
 /// Private helper function.
 fn keypair_from_seed(seed: &[u8]) -> Keypair {
