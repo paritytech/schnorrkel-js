@@ -6,15 +6,48 @@ extern crate schnorrkel;
 mod wrapper;
 use wrapper::*;
 
+/// Perform a derivation on a secret
+///
+/// * secret: UIntArray with 64 bytes
+/// * cc: UIntArray with 32 bytes
+///
+/// returned vector the derived keypair as a array of 96 bytes
+#[wasm_bindgen]
+pub fn derive_keypair_hard(pair: &[u8], cc: &[u8]) -> Vec<u8> {
+	__derive_keypair_hard(pair, cc).to_vec()
+}
+
+/// Perform a derivation on a secret
+///
+/// * secret: UIntArray with 64 bytes
+/// * cc: UIntArray with 32 bytes
+///
+/// returned vector the derived keypair as a array of 96 bytes
+#[wasm_bindgen]
+pub fn derive_keypair_soft(pair: &[u8], cc: &[u8]) -> Vec<u8> {
+	__derive_keypair_soft(pair, cc).to_vec()
+}
+
+/// Perform a derivation on a publicKey
+///
+/// * pubkey: UIntArray with 32 bytes
+/// * cc: UIntArray with 32 bytes
+///
+/// returned vector is the derived publicKey as a array of 32 bytes
+#[wasm_bindgen]
+pub fn derive_public_soft(public: &[u8], cc: &[u8]) -> Vec<u8> {
+	__derive_public_soft(public, cc).to_vec()
+}
+
 /// Sign a message
-/// 
+///
 /// The combination of both public and private key must be provided.
 /// This is effectively equivalent to a keypair.
-/// 
+///
 /// * public: UIntArray with 32 element
 /// * private: UIntArray with 64 element
 /// * message: Arbitrary length UIntArray
-/// 
+///
 /// * returned vector is the signature consisting of 64 bytes.
 #[wasm_bindgen]
 pub fn sign(public: &[u8], private: &[u8], message: &[u8]) -> Vec<u8> {
@@ -22,7 +55,7 @@ pub fn sign(public: &[u8], private: &[u8], message: &[u8]) -> Vec<u8> {
 }
 
 /// Verify a message and its corresponding against a public key;
-/// 
+///
 /// * signature: UIntArray with 64 element
 /// * message: Arbitrary length UIntArray
 /// * pubkey: UIntArray with 32 element
@@ -32,19 +65,19 @@ pub fn verify(signature: &[u8], message: &[u8], pubkey: &[u8]) -> bool {
 }
 
 /// Generate a secret key (aka. private key) from a seed phrase.
-/// 
+///
 /// * seed: UIntArray with 32 element
-/// 
+///
 /// returned vector is the private key consisting of 64 bytes.
 #[wasm_bindgen]
 pub fn secret_from_seed(seed: &[u8]) -> Vec<u8> {
 	__secret_from_seed(seed).to_vec()
-} 
+}
 
 /// Generate a key pair. .
-/// 
+///
 /// * seed: UIntArray with 32 element
-/// 
+///
 /// returned vector is the concatenation of first the private key (64 bytes)
 /// followed by the public key (32) bytes.
 #[wasm_bindgen]
@@ -58,6 +91,7 @@ pub mod tests {
 	extern crate rand;
 	extern crate schnorrkel;
 
+	use hex_literal::{hex, hex_impl};
 	use wasm_bindgen_test::*;
 	use super::*;
 	use schnorrkel::{SIGNATURE_LENGTH, KEYPAIR_LENGTH, SECRET_KEY_LENGTH};
@@ -104,5 +138,39 @@ pub mod tests {
 		let message = b"this is a message";
 		let signature = sign(public, private, message);
 		assert!(verify(&signature[..], message, public));
+	}
+
+	#[wasm_bindgen_test]
+	fn hard_derives_pair() {
+		let cc = hex!("14416c6963650000000000000000000000000000000000000000000000000000"); // Alice
+		let seed = hex!("fac7959dbfe72f052e5a0c3c8d6530f202b02fd8f9f5ca3580ec8deb7797479e");
+		let expected = hex!("d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d");
+		let keypair = __keypair_from_seed(&seed);
+		let derived = derive_keypair_hard(&keypair, &cc);
+		let public = &derived[SECRET_KEY_LENGTH..KEYPAIR_LENGTH];
+
+		assert_eq!(public, expected);
+	}
+
+	#[wasm_bindgen_test]
+	fn soft_derives_pair() {
+		let cc = hex!("0c666f6f00000000000000000000000000000000000000000000000000000000"); // foo
+		let seed = hex!("fac7959dbfe72f052e5a0c3c8d6530f202b02fd8f9f5ca3580ec8deb7797479e");
+		let expected = hex!("40b9675df90efa6069ff623b0fdfcf706cd47ca7452a5056c7ad58194d23440a");
+		let keypair = __keypair_from_seed(&seed);
+		let derived = derive_keypair_soft(&keypair, &cc);
+		let public = &derived[SECRET_KEY_LENGTH..KEYPAIR_LENGTH];
+
+		assert_eq!(public, expected);
+	}
+
+	#[wasm_bindgen_test]
+	fn soft_derives_public() {
+		let cc = hex!("0c666f6f00000000000000000000000000000000000000000000000000000000"); // foo
+		let public = hex!("46ebddef8cd9bb167dc30878d7113b7e168e6f0646beffd77d69d39bad76b47a");
+		let expected = hex!("40b9675df90efa6069ff623b0fdfcf706cd47ca7452a5056c7ad58194d23440a");
+		let derived = derive_public_soft(&public, &cc);
+
+		assert_eq!(derived, expected);
 	}
 }
