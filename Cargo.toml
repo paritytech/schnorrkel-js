@@ -1,6 +1,6 @@
 [package]
 name = "schnorrkel-js"
-version = "0.1.2"
+version = "0.2.0"
 authors = ["kianenigma <Kian.peymani@gmail.com>"]
 edition = "2018"
 
@@ -10,8 +10,8 @@ crate-type = ["cdylib"]
 [dependencies]
 wasm-bindgen = { version = "0.2" }
 wasm-bindgen-test = { version = "0.2" }
-sha2 = { version = "0.8"}
-schnorrkel = { version = "0.0", features = ["nightly"]}
+schnorrkel = { version = "0.1", features = ["nightly"]}
 
 [dev-dependencies]
+hex-literal = "0.1.4"
 rand = { version = "0.6.5", features = ["wasm-bindgen"] }
