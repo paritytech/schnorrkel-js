@@ -54,7 +54,28 @@ pub fn sign(public: &[u8], private: &[u8], message: &[u8]) -> Vec<u8> {
 	__sign(public, private, message).to_vec()
 }
 
-/// Verify a message and its corresponding against a public key;
+/// Sign a message with a given signing context
+///
+/// The combination of both public and private key must be provided.
+/// This is effectively equivalent to a keypair.
+///
+/// * public: UIntArray with 32 element
+/// * private: UIntArray with 64 element
+/// * message: Arbitrary length UIntArray
+/// * signing_ctx: Arbitrary length UIntArray
+///
+/// * returned vector is the signature consisting of 64 bytes.
+#[wasm_bindgen]
+pub fn sign_with_ctx(
+	public: &[u8],
+	private: &[u8],
+	message: &[u8],
+	signing_ctx: &[u8],
+	) -> Vec<u8> {
+	__sign_with_ctx(public, private, message, signing_ctx).to_vec()
+}
+
+/// Verify a message and its corresponding signature against a public key;
 ///
 /// * signature: UIntArray with 64 element
 /// * message: Arbitrary length UIntArray
@@ -62,6 +83,22 @@ pub fn sign(public: &[u8], private: &[u8], message: &[u8]) -> Vec<u8> {
 #[wasm_bindgen]
 pub fn verify(signature: &[u8], message: &[u8], pubkey: &[u8]) -> bool {
 	__verify(signature, message, pubkey)
+}
+
+/// Verify a message with a given signing context;
+///
+/// * signature: UIntArray with 64 element
+/// * message: Arbitrary length UIntArray
+/// * pubkey: UIntArray with 32 element
+/// * signing_ctx: UIntArray with 32 element
+#[wasm_bindgen]
+pub fn verify_with_ctx(
+	signature: &[u8],
+	message: &[u8],
+	pubkey: &[u8],
+	signing_ctx: &[u8]
+	) -> bool {
+	__verify_with_ctx(signature, message, pubkey, signing_ctx)
 }
 
 /// Generate a secret key (aka. private key) from a seed phrase.
@@ -130,6 +167,18 @@ pub mod tests {
 	}
 
 	#[wasm_bindgen_test]
+	fn can_sign_message_with_ctx() {
+		let seed = generate_random_seed();
+		let keypair = keypair_from_seed(seed.as_slice());
+		let private = &keypair[0..SECRET_KEY_LENGTH];
+		let public = &keypair[SECRET_KEY_LENGTH..KEYPAIR_LENGTH];
+		let message = b"this is a message";
+		let ctx = b"my context";
+		let signature = sign_with_ctx(public, private, message, ctx);
+		assert!(signature.len() == SIGNATURE_LENGTH);
+	}
+
+	#[wasm_bindgen_test]
 	fn can_verify_message() {
 		let seed = generate_random_seed();
 		let keypair = keypair_from_seed(seed.as_slice());
@@ -138,6 +187,18 @@ pub mod tests {
 		let message = b"this is a message";
 		let signature = sign(public, private, message);
 		assert!(verify(&signature[..], message, public));
+	}
+
+	#[wasm_bindgen_test]
+	fn can_verify_message_with_ctx() {
+		let seed = generate_random_seed();
+		let keypair = keypair_from_seed(seed.as_slice());
+		let private = &keypair[0..SECRET_KEY_LENGTH];
+		let public = &keypair[SECRET_KEY_LENGTH..KEYPAIR_LENGTH];
+		let message = b"this is a message";
+		let signing_ctx = b"a signing context";
+		let signature = sign_with_ctx(public, private, message, signing_ctx);
+		assert!(verify_with_ctx(&signature[..], message, public, signing_ctx));
 	}
 
 	#[wasm_bindgen_test]

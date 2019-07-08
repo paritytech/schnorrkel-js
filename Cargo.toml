@@ -10,7 +10,7 @@ crate-type = ["cdylib"]
 [dependencies]
 wasm-bindgen = { version = "0.2" }
 wasm-bindgen-test = { version = "0.2" }
-schnorrkel = { version = "0.1", features = ["nightly"]}
+schnorrkel = { version = "0.6.1", features = ["nightly"]}
 
 [dev-dependencies]
 hex-literal = "0.1.4"

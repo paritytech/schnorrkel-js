@@ -5,7 +5,7 @@ use schnorrkel::derive::{Derivation, ChainCode, CHAIN_CODE_LENGTH};
 use schnorrkel::sign::{Signature,SIGNATURE_LENGTH};
 
 // We must make sure that this is the same as declared in the substrate source code.
-const SIGNING_CTX: &'static [u8] = b"substrate";
+const DEFAULT_SIGNING_CTX: &'static[u8] = b"substrate";
 
 /// Private helper function.
 fn keypair_from_seed(seed: &[u8]) -> Keypair {
@@ -67,7 +67,12 @@ pub fn __secret_from_seed(seed: &[u8]) -> [u8; SECRET_KEY_LENGTH] {
 	s
 }
 
-pub fn __verify(signature: &[u8], message: &[u8], pubkey: &[u8]) -> bool {
+pub fn __verify_with_ctx(
+	signature: &[u8],
+	message: &[u8],
+	pubkey: &[u8],
+	signing_ctx: &[u8]
+	) -> bool {
 	let sig = match Signature::from_bytes(signature) {
 		Ok(some_sig) => some_sig,
 		Err(_) => return false
@@ -76,10 +81,26 @@ pub fn __verify(signature: &[u8], message: &[u8], pubkey: &[u8]) -> bool {
 		Ok(some_pk) => some_pk,
 		Err(_) => return false
 	};
-	pk.verify_simple(SIGNING_CTX, message, &sig)
+
+	pk.verify_simple(signing_ctx, message, &sig).is_ok()
 }
 
-pub fn __sign(public: &[u8], private: &[u8], message: &[u8]) -> [u8; SIGNATURE_LENGTH] {
+pub fn __verify(signature: &[u8], message: &[u8], pubkey: &[u8]) -> bool {
+	__verify_with_ctx(
+		signature,
+		message,
+		pubkey,
+		DEFAULT_SIGNING_CTX
+		)
+}
+
+pub fn __sign_with_ctx(
+	public: &[u8],
+	private: &[u8],
+	message: &[u8],
+	signing_ctx: &[u8]
+	) -> [u8; SIGNATURE_LENGTH] {
+
 	// despite being a method of KeyPair, only the secret is used for signing.
 	let secret = match SecretKey::from_bytes(private) {
 		Ok(some_secret) => some_secret,
@@ -91,6 +112,21 @@ pub fn __sign(public: &[u8], private: &[u8], message: &[u8]) -> [u8; SIGNATURE_L
 		Err(_) => panic!("Provided public key is invalid.")
 	};
 
-	let context = signing_context(SIGNING_CTX);
+	let context = signing_context(signing_ctx);
+
 	secret.sign(context.bytes(message), &public).to_bytes()
 }
+
+pub fn __sign(
+	public: &[u8],
+	private: &[u8],
+	message: &[u8],
+	) -> [u8; SIGNATURE_LENGTH] {
+	__sign_with_ctx(
+		public,
+		private,
+		message,
+		DEFAULT_SIGNING_CTX
+	)
+}
+
